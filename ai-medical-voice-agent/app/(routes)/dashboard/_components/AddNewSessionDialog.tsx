@@ -51,22 +51,35 @@ const [historyList, sethistoryList]=useState<SessionDetail[]>([])
 
 
 
+   const OnClickNext = async () => {
+  try {
+    setLoading(true);
+    const result = await axios.post("/api/suggest-doctors", { notes: note });
+    console.log("API response:", result.data);
 
+    // result.data is already JSON (array or object)
+    let doctors: doctorAgent[] = [];
 
-  const OnClickNext = async () => {
-    try {
-      setLoading(true);
-      const result = await axios.post("/api/suggest-doctors", {
-        notes: note,
-      });
-      console.log(result.data);
-      setSuggestedDoctors(result.data.doctors || []);
-    } catch (error) {
-      console.error("API error:", error);
-    } finally {
-      setLoading(false);
+    if (Array.isArray(result.data)) {
+      doctors = result.data;
+    } else if (result.data?.doctors) {
+      doctors = result.data.doctors;
     }
-  };
+
+    // Assign IDs if missing
+    doctors = doctors.map((d, index) => ({
+  ...d,
+  id: d.id || index + 1
+}));
+
+    setSuggestedDoctors(doctors);
+  } catch (error) {
+    console.error("API error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const onStartConsultation= async()=>{
     //Save all info to database
