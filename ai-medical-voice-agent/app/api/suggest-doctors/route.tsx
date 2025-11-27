@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "mistralai/mistral-7b-instruct",
+      model: ""gpt-4o-mini"",
       max_tokens: 500,
       messages: [
         { role: 'system', content: JSON.stringify(AIDoctorAgents) },
